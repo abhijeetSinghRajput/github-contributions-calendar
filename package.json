@@ -3,13 +3,21 @@
   "displayName": "GitHub Contributions Calendar",
   "description": "View your GitHub contribution heatmap right in VS Code",
   "version": "0.0.1",
-  "publisher": "your-publisher-name",
+  "publisher": "mrcodium",
+  "icon": "media/logo.png",
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [],
   "main": "./out/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhijeetSinghRajput/github-contributions-calendar"
+  },
+  "license": "MIT",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -23,6 +31,7 @@
     "views": {
       "githubContributions": [
         {
+          "icon": "media/icon.svg",
           "type": "webview",
           "id": "githubContributions.calendarView",
           "name": "Contribution Calendar"
