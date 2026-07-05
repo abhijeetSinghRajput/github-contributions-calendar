@@ -1,0 +1,67 @@
+{
+  "name": "github-contributions-calendar",
+  "displayName": "GitHub Contributions Calendar",
+  "description": "View your GitHub contribution heatmap right in VS Code",
+  "version": "0.0.1",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "githubContributions",
+          "title": "GitHub Contributions",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "githubContributions": [
+        {
+          "type": "webview",
+          "id": "githubContributions.calendarView",
+          "name": "Contribution Calendar"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "githubContributions.refresh",
+        "title": "Refresh Contribution Calendar",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "githubContributions.signIn",
+        "title": "GitHub Contributions: Sign in to GitHub"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "githubContributions.refresh",
+          "when": "view == githubContributions.calendarView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "compile": "tsc -p ./ --noEmit",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^2.24.0"
+  }
+}
