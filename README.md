@@ -11,7 +11,7 @@
   <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=mrcodium.github-contributions-calendar">
     <img
-      src="media/screenshots/vs-code.svg"
+      src="media/screenshots/vs-code.png"
       alt="VS Code"
       width="28"
       style="vertical-align: middle;"
