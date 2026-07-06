@@ -9,6 +9,8 @@
       vscode.postMessage({ type: 'signIn' });
     } else if (target.id === 'refreshBtn') {
       vscode.postMessage({ type: 'refresh' });
+    } else if (target.id === 'expandBtn') {
+      vscode.postMessage({ type: 'expand' });
     }
   });
 })();

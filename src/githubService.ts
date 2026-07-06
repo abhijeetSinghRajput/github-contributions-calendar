@@ -14,11 +14,13 @@ export interface ContributionData {
   username: string;
   totalContributions: number;
   weeks: ContributionWeek[];
+  createdAt: string;
 }
 
 const QUERY = `
 query($userName: String!) {
   user(login: $userName) {
+    createdAt
     contributionsCollection {
       contributionCalendar {
         totalContributions
@@ -77,7 +79,8 @@ export async function fetchContributions(
     throw new Error(json.errors.map((e: any) => e.message).join('; '));
   }
 
-  const calendar = json.data?.user?.contributionsCollection?.contributionCalendar;
+  const user = json.data?.user;
+  const calendar = user?.contributionsCollection?.contributionCalendar;
   if (!calendar) {
     throw new Error('No contribution data returned for this account.');
   }
@@ -94,5 +97,6 @@ export async function fetchContributions(
     username,
     totalContributions: calendar.totalContributions,
     weeks,
+    createdAt: user.createdAt,
   };
 }

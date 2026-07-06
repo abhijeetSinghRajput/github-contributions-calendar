@@ -1,35 +1,6 @@
 import * as vscode from 'vscode';
 import { fetchContributions, getGitHubSession, ContributionData } from './githubService';
-
-const CELL_SIZE = 10;
-const CELL_GAP = 3;
-const STEP = CELL_SIZE + CELL_GAP;
-const MONTH_LABEL_HEIGHT = 20;
-
-const COLORS = {
-  light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
-  dark: ["#252527", "#0e4429", "#006b32", "#26a642", "#3ad454"],
-};
-
-function getPalette(): string[] {
-  const kind = vscode.window.activeColorTheme.kind;
-  const isDark =
-    kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrast;
-  return isDark ? COLORS.dark : COLORS.light;
-}
-
-function isDarkTheme(): boolean {
-  const kind = vscode.window.activeColorTheme.kind;
-  return kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrast;
-}
-
-function getLevel(count: number): number {
-  if (count === 0) return 0;
-  if (count <= 3) return 1;
-  if (count <= 6) return 2;
-  if (count <= 9) return 3;
-  return 4;
-}
+import { buildHeatmapSvg, computeStats, buildStatsFooter, escapeHtml } from './heatmapRenderer';
 
 export class ContributionsViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'githubContributions.calendarView';
@@ -57,6 +28,8 @@ export class ContributionsViewProvider implements vscode.WebviewViewProvider {
         vscode.commands.executeCommand('githubContributions.signIn');
       } else if (message.type === 'refresh') {
         vscode.commands.executeCommand('githubContributions.refresh');
+      } else if (message.type === 'expand') {
+        vscode.commands.executeCommand('githubContributions.openFullView', this.lastData);
       }
     });
 
@@ -136,75 +109,21 @@ export class ContributionsViewProvider implements vscode.WebviewViewProvider {
   private renderCalendar(data: ContributionData) {
     if (!this.view) return;
 
-    const palette = getPalette();
-    const labelColor = isDarkTheme() ? '#8b949e' : '#57606a';
-
-    // Month labels: emit a label whenever the month changes going into a new week column.
-    const monthLabels: { x: number; label: string }[] = [];
-    let lastMonth = -1;
-    data.weeks.forEach((week, wi) => {
-      const firstDay = week.days[0];
-      if (!firstDay) return;
-      const month = new Date(firstDay.date).getMonth();
-      if (month !== lastMonth) {
-        monthLabels.push({
-          x: wi * STEP,
-          label: new Date(firstDay.date).toLocaleString('default', { month: 'short' }),
-        });
-        lastMonth = month;
-      }
-    });
-
-    const svgWidth = data.weeks.length * STEP;
-    const svgHeight = MONTH_LABEL_HEIGHT + 7 * STEP;
-
-    const monthLabelsSvg = monthLabels
-      .map(
-        ({ x, label }) =>
-          `<text x="${x}" y="12" font-size="10" fill="${labelColor}" font-family="monospace">${escapeHtml(label)}</text>`
-      )
-      .join('');
-
-    const cellsSvg = data.weeks
-      .map((week, wi) =>
-        week.days
-          .map((day, di) => {
-            const x = wi * STEP;
-            const y = MONTH_LABEL_HEIGHT + di * STEP;
-            const level = getLevel(day.count);
-            const fill = palette[level];
-            const tooltip =
-              day.count === 0
-                ? `No contributions on ${day.date}`
-                : `${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}`;
-            return `<rect x="${x}" y="${y}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="2" fill="${fill}"><title>${escapeHtml(tooltip)}</title></rect>`;
-          })
-          .join('')
-      )
-      .join('');
-
-    const legendHtml = palette
-      .map((color) => `<div class="legend-swatch" style="background:${color}"></div>`)
-      .join('');
+    const { svg, legendSwatches } = buildHeatmapSvg(data, 10, 3);
+    const stats = computeStats(data);
 
     this.view.webview.html = this.html(`
       <div class="header">
         <span class="total">${data.totalContributions} contributions in the last year</span>
-        <button id="refreshBtn" title="Refresh">↻</button>
+        <button id="expandBtn" class="icon" title="Open full view">⛶</button>
       </div>
-      <svg viewBox="0 0 ${svgWidth} ${svgHeight}" width="100%" class="calendar-svg">
-        ${monthLabelsSvg}
-        ${cellsSvg}
-      </svg>
+      ${svg}
       <div class="legend">
         <span>Less</span>
-        ${legendHtml}
+        ${legendSwatches}
         <span>More</span>
       </div>
+      ${buildStatsFooter(stats)}
     `);
   }
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

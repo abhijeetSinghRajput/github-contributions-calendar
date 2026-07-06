@@ -2,7 +2,7 @@
   "name": "github-contributions-calendar",
   "displayName": "GitHub Contributions Calendar",
   "description": "View your GitHub contribution heatmap right in VS Code",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "publisher": "mrcodium",
   "icon": "media/logo.png",
   "engines": {
@@ -34,7 +34,7 @@
           "icon": "media/icon.svg",
           "type": "webview",
           "id": "githubContributions.calendarView",
-          "name": "Contribution Calendar"
+          "name": ""
         }
       ]
     },
