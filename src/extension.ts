@@ -4,7 +4,7 @@ import { ContributionsPanel } from './contributionsPanel';
 import { ContributionData } from './githubService';
 
 export function activate(context: vscode.ExtensionContext) {
-  const provider = new ContributionsViewProvider(context.extensionUri);
+  const provider = new ContributionsViewProvider(context.extensionUri, context);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(ContributionsViewProvider.viewType, provider)
@@ -21,8 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'githubContributions.openFullView',
-      (initialData?: ContributionData) => ContributionsPanel.createOrShow(context.extensionUri, initialData)
+      (initialData?: ContributionData) =>
+        ContributionsPanel.createOrShow(context.extensionUri, context, initialData)
     )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('githubContributions.disconnect', () => provider.disconnect())
   );
 
   // Keep the view in sync if the user signs in/out of GitHub elsewhere in VS Code.

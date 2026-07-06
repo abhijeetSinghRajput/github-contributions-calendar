@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import { fetchContributions, getGitHubSession, ContributionData } from './githubService';
 import { buildHeatmapSvg, computeStats, buildStatsFooter, escapeHtml } from './heatmapRenderer';
 
+const DISCONNECTED_KEY = 'githubContributions.disconnected';
+const CACHE_KEY = 'githubContributions.cachedData';
+
 export class ContributionsPanel {
   private static current: ContributionsPanel | undefined;
 
@@ -9,7 +12,11 @@ export class ContributionsPanel {
   private lastData?: ContributionData;
   private readonly disposables: vscode.Disposable[] = [];
 
-  public static async createOrShow(extensionUri: vscode.Uri, initialData?: ContributionData) {
+  public static async createOrShow(
+    extensionUri: vscode.Uri,
+    context: vscode.ExtensionContext,
+    initialData?: ContributionData
+  ) {
     if (ContributionsPanel.current) {
       ContributionsPanel.current.panel.reveal(vscode.ViewColumn.Active);
       if (initialData) {
@@ -30,12 +37,13 @@ export class ContributionsPanel {
       }
     );
 
-    ContributionsPanel.current = new ContributionsPanel(panel, extensionUri, initialData);
+    ContributionsPanel.current = new ContributionsPanel(panel, extensionUri, context, initialData);
   }
 
   private constructor(
     panel: vscode.WebviewPanel,
     private readonly extensionUri: vscode.Uri,
+    private readonly context: vscode.ExtensionContext,
     initialData?: ContributionData
   ) {
     this.panel = panel;
@@ -53,6 +61,10 @@ export class ContributionsPanel {
           this.refresh(true);
         } else if (message.type === 'signIn') {
           this.refresh(true);
+        } else if (message.type === 'disconnect') {
+          vscode.commands.executeCommand('githubContributions.disconnect');
+        } else if (message.type === 'manageAccess') {
+          vscode.commands.executeCommand('workbench.action.showAccountsMenu');
         }
       })
     );
@@ -65,11 +77,10 @@ export class ContributionsPanel {
       })
     );
 
-    if (initialData) {
-      // We already have data from the sidebar view - show it immediately,
-      // then quietly check for anything newer in the background.
-      this.lastData = initialData;
-      this.renderCalendar(initialData);
+    const cached = initialData ?? (!this.isDisconnected() ? this.getCachedData() : undefined);
+    if (cached) {
+      this.lastData = cached;
+      this.renderCalendar(cached);
       this.refresh(false, true);
     } else {
       this.renderLoading();
@@ -77,7 +88,26 @@ export class ContributionsPanel {
     }
   }
 
+  private isDisconnected(): boolean {
+    return this.context.globalState.get<boolean>(DISCONNECTED_KEY, false);
+  }
+
+  private getCachedData(): ContributionData | undefined {
+    return this.context.globalState.get<ContributionData>(CACHE_KEY);
+  }
+
+  private async setCachedData(data: ContributionData | undefined) {
+    await this.context.globalState.update(CACHE_KEY, data);
+  }
+
   private async refresh(createIfNone: boolean, silent: boolean = false) {
+    if (!createIfNone && this.isDisconnected()) {
+      if (!silent) {
+        this.renderSignedOut();
+      }
+      return;
+    }
+
     const session = await getGitHubSession(createIfNone);
     if (!session) {
       if (!silent) {
@@ -93,6 +123,7 @@ export class ContributionsPanel {
     try {
       const data = await fetchContributions(session);
       this.lastData = data;
+      await this.setCachedData(data);
       this.renderCalendar(data);
     } catch (err: any) {
       if (!silent) {
@@ -154,7 +185,10 @@ export class ContributionsPanel {
     this.panel.webview.html = this.html(`
       <div class="header">
         <span class="total">${data.totalContributions} contributions in the last year</span>
-        <button id="refreshBtn" class="icon" title="Refresh">↻</button>
+        <div class="header-actions">
+          <button id="refreshBtn" class="icon" title="Refresh">↻</button>
+          <button id="disconnectBtn" class="icon" title="Disconnect GitHub">✕</button>
+        </div>
       </div>
       ${svg}
       <div class="legend">

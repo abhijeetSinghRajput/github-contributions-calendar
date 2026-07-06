@@ -11,6 +11,8 @@
       vscode.postMessage({ type: 'refresh' });
     } else if (target.id === 'expandBtn') {
       vscode.postMessage({ type: 'expand' });
+    } else if (target.id === 'disconnectBtn') {
+      vscode.postMessage({ type: 'disconnect' });
     }
   });
 })();
