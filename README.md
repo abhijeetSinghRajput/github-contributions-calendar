@@ -11,30 +11,28 @@
   <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=mrcodium.github-contributions-calendar">
     <img
-      src="media/screenshots/vs-code.png"
+      src="media/screenshots/install-from-marketplace.png"
       alt="VS Code"
-      width="28"
+      height="28"
       style="vertical-align: middle;"
     />
-    <span style="font-size: 24px; font-weight: 700; vertical-align: middle;">
-      Install from Marketplace
-    </span>
   </a>
 </p>
 
-  <p>
-    <a href="https://marketplace.visualstudio.com/search?term=github%20contributions%20calendar&target=VSCode&category=All%20categories&sortBy=Relevance">Marketplace</a> ·
-    <a href="https://github.com/abhijeetsinghrajput/github-contributions-calendar/issues">Issues</a> ·
-    <a href="https://github.com/abhijeetsinghrajput/github-contributions-calendar/issues/new">Request Feature</a>
-  </p>
 
-  <p>
-    <img alt="made by" src="https://img.shields.io/badge/made%20by-abhijeetsinghrajput-blueviolet" />
-    <img alt="license" src="https://img.shields.io/badge/license-MIT-green" />
-    <img alt="VS Code Marketplace Version" src="https://img.shields.io/visual-studio-marketplace/v/your-publisher-name.github-contributions-calendar" />
-    <img alt="VS Code Marketplace Installs" src="https://img.shields.io/visual-studio-marketplace/i/your-publisher-name.github-contributions-calendar" />
-    <img alt="VS Code Marketplace Rating" src="https://img.shields.io/visual-studio-marketplace/r/your-publisher-name.github-contributions-calendar" />
-  </p>
+
+<p align="center">
+  <a href="https://github.com/abhijeetsinghrajput/github-contributions-calendar">
+    <img alt="made by" src="https://img.shields.io/badge/made%20by-abhijeetsinghrajput-blueviolet?style=flat" />
+  </a>
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-brightgreen?style=flat" />
+  <img alt="GitHub stars" src="https://img.shields.io/github/stars/abhijeetsinghrajput/github-contributions-calendar?style=flat&color=blue" />
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/abhijeetsinghrajput/github-contributions-calendar?style=flat&color=blue" />
+  <img alt="VS Code Marketplace Installs" src="https://vsmarketplacebadges.dev/installs/mrcodium.github-contributions-calendar.svg?color=blue" />
+  <img alt="VS Code Marketplace Rating" src="https://vsmarketplacebadges.dev/rating/mrcodium.github-contributions-calendar.svg?color=blue" />
+</p>
+
+<img src="media/screenshots/demo.gif" alt="GitHub Contributions Calendar logo" width="600"  />
 </div>
 
 <details>
@@ -65,35 +63,7 @@ there's no personal access token to create, copy, or manage) and queries
 GitHub's own GraphQL contribution API, the same data source that powers the
 heatmap on github.com.
 
-![Contribution heatmap preview](media/screenshots/step-3.png)
-
-## 🚀 Getting Started
-
-**1. Install the extension**
-
-Open the Extensions view (`Ctrl+Shift+X` / `Cmd+Shift+X`), search for
-**"GitHub Contributions Calendar"**, and click **Install**. Or install it
-directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/search?term=github%20contributions%20calendar&target=VSCode&category=All%20categories&sortBy=Relevance).
-
-![Search and install](media/screenshots/step-1.png)
-
-**2. Open the panel**
-
-Click the GitHub Contributions icon in the Activity Bar (the vertical strip
-of icons on the far left of VS Code).
-
-![Click the icon](media/screenshots/step-2.png)
-
-**3. Sign in with GitHub**
-
-Click **Sign in to GitHub**. VS Code will open your browser to the standard
-GitHub authorization page — approve it, and switch back to VS Code. Your
-heatmap loads automatically.
-
-![Sign in and view heatmap](media/screenshots/step-3.png)
-
-That's it — no tokens, no config files. Use the refresh (↻) button in the
-view's title bar any time you want to pull the latest counts.
+![Contribution heatmap preview](media/screenshots/banner.png)
 
 ## ✨ Features
 
