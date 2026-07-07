@@ -51,6 +51,7 @@ button {
 
 button.icon {
   background: transparent;
+  color: var(--vscode-icon-foreground);
   font-size: 16px;
   padding: 3px;
   width: 22px;

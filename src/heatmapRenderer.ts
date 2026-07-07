@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { ContributionData } from './githubService';
 
 const COLORS = {
-  light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-  dark: ['#1e1e1f', '#0e4429', '#006b32', '#26a642', '#3ad454'],
+  light: ['#0000001a', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+  dark: ['#ffffff08', '#0e4429', '#006b32', '#26a642', '#3ad454'],
 };
 
 export function isDarkTheme(): boolean {
